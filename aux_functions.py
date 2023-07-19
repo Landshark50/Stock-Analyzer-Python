@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd 
 
-# Lista de los campos a los que se le ha aplicado el fix trivial
+#list of fields where the trivial fix has been applied
 trivial_fix_list = list({"Other Liabilities", "Preferred Stock", "Common Stock", "Tax Assets", "Tax Payable", "Capital Lease Obligations", "Common Stock Repurchased", "Common Stock Issued",
                     "Dividends Paid", "Deferred Income Tax", "Account Recievable", "Interest Income ", "Accounts Receivable", "Other Expenses", "Stock Based Compensation", "Deferred Income Tax",
                     "Interest Expense", "Other Investing Activities", "Accounts Payable", "PP&E", "Deferred Tax Liabilities", "Purchases of Investments", "Sales/Maturities of Investments","Investments",
@@ -59,21 +59,21 @@ def fundamental_calculator(fundamental_data):
     fundamental_data = fundamental_data.T
     print(fundamental_data.columns)
     # ===================================================================================================================================
-    #                                                     AÑADIR RATIOS
+    #                                                    ADD RATIOS
     # ===================================================================================================================================
     shares = fundamental_data["Weighted Avg. Shares Outs."]
 
 
-    # Calculamos el FCF Ratio
+    # Calculate the FCF Ratio
     fundamental_data["FCF Ratio"] = fundamental_data["Free Cash Flow"] / fundamental_data["Revenue"]
     
 
     # ==========================================        MÉTRICAS PER SHARE        ===============================================
-    # Calculamos el Revenue per Share
+    # Calculate the Revenue per Share
     fundamental_data["Revenue per Share"] = fundamental_data["Revenue"] / shares
-    # Calculamos el FCF per share
+    # Calculate the FCF per share
     fundamental_data["FCF per share"] = fundamental_data["Free Cash Flow"] / shares
-    # CAPEX per share
+    # Calculate the Capital Expenditure (CAPEX) per share
     fundamental_data["CAPEX per share"] = fundamental_data["CAPEX"] / shares
 
     # Book Value per share
@@ -83,56 +83,56 @@ def fundamental_calculator(fundamental_data):
 
     
 
-    # =======================================     MÉTRICAS DE SALUD FINANCIERA       ===============================================
-    # Calculamos total debt
+    # =======================================     FINANCIAL HEALTH METRICS      ===============================================
+    # Calculate total debt
     fundamental_data["Total Debt"] = fundamental_data["Short-Term Debt"].add(fundamental_data["Long-Term Debt"], fill_value=0)
 
-    # Calculamos el Cash to Debt Ratio
+    # Calculate the Cash to Debt Ratio
     fundamental_data["Cash to Debt Ratio"] = fundamental_data["Cash and Cash Equivalents"] / fundamental_data["Total Debt"]
     if np.inf in fundamental_data["Cash to Debt Ratio"].values:
         fundamental_data["Cash to Debt Ratio"] = fundamental_data["Cash to Debt Ratio"].replace(np.inf, 99)
 
 
 
-    # Calculamos el Cash & Short-Term Investments & Long Term Investments
+    # Calculate the Cash & Short-Term Investments & Long Term Investments
     fundamental_data["Cash & Short-Term Investments & Long Term Investments"] = fundamental_data["Cash & Short-Term Investments"]+fundamental_data["Investments"]
-    # Calculamos el Cash & Short-Term Investments & Long Term Investments to Debt Ratio
+    # Calculate the Cash & Short-Term Investments & Long Term Investments to Debt Ratio
     fundamental_data["Cash & Short-Term Investments & Long Term Investments to Debt Ratio"] = fundamental_data["Cash & Short-Term Investments & Long Term Investments"] / fundamental_data["Total Debt"]
     if np.inf in fundamental_data["Cash & Short-Term Investments & Long Term Investments to Debt Ratio"].values:
         fundamental_data["Cash & Short-Term Investments & Long Term Investments to Debt Ratio"] = fundamental_data["Cash & Short-Term Investments & Long Term Investments to Debt Ratio"].replace(np.inf, 99)
 
         
-    # Calculamos Net Debt
+    # Calculates Net Debt
     fundamental_data["Net Debt"] = fundamental_data["Total Debt"] - fundamental_data["Cash & Short-Term Investments"]
-    # Calculamos Net Debt minus Investments
+    # Calculates Net Debt minus Investments
     fundamental_data["Net Debt minus Investments"] = fundamental_data["Net Debt"] - fundamental_data["Investments"]
 
-    # Calculamos el Working Capital
+    # Calculates Working Capital
     fundamental_data["Working Capital"] = fundamental_data["Total Current Assets"] - fundamental_data["Total Current Liabilities"]
 
-    # Calculamos Debt to EBITDA
+    # Calcualtes Debt to  earnings before interest, taxes, depreciation and amortization (EBITDA)
     fundamental_data["Debt to EBITDA"] = fundamental_data["Total Debt"] / fundamental_data["EBITDA"]
 
-    # Calculamos el Current Ratio
+    # Calculates Current Ratio
     fundamental_data["Current Ratio"] = fundamental_data["Total Current Assets"] / fundamental_data["Total Current Liabilities"]
 
-    # Calculamos el Quick Ratio
+    # Calculates Quick Ratio
     fundamental_data["Quick Ratio"] = (fundamental_data["Total Current Assets"] - fundamental_data["Inventory"])/ fundamental_data["Total Current Liabilities"]
 
-    # Calculamos el Debt to Equity
+    # Calculates Debt to Equity
     fundamental_data["Debt to Equity"] = fundamental_data["Total Debt"] / fundamental_data["Total Stockholders Equity"]
 
-    # Calculamos el Debt to Assets
+    # Calculates Debt to Assets
     fundamental_data["Debt to Assets"] = fundamental_data["Total Debt"] / fundamental_data["Total Assets"]
 
-    # Calculamos el Liabilities to Assets
+    # Calculates Liabilities to Assets
     fundamental_data["Liabilities to Assets"] = fundamental_data["Total Liabilities"] / fundamental_data["Total Assets"]
 
 
-    # Calculamos el Interest Coverage
+    # Calculates Interest Coverage
     fundamental_data["Interest Coverage"] = fundamental_data["EBITDA"] / fundamental_data["Interest Expense"]
 
-    # Ponemos valor 99 para reflejar que la situación es buena
+    # We put the value "99" to show that the situation is good 
     if np.inf in fundamental_data["Interest Coverage"].values:
         fundamental_data["Interest Coverage"] = fundamental_data["Interest Coverage"].replace(np.inf, 99)
     elif -np.inf in fundamental_data["Interest Coverage"].values:
@@ -140,14 +140,14 @@ def fundamental_calculator(fundamental_data):
 
 
 
-    # =======================================     MÉTRICAS DE RENTABILIDAD       ===============================================
-    # Calculamos el Return on Equity
+    # =======================================     PROFITABILITY METRICS      ===============================================
+    # Calculates Return on Equity
     fundamental_data["Return on Equity"] = fundamental_data["Net Income"] / fundamental_data["Total Stockholders Equity"]
 
-    # Calculamos el Return on Assets
+    # Calculates Return on Assets
     fundamental_data["Return on Assets"] = fundamental_data["Net Income"] / fundamental_data["Total Assets"]
 
-    # Calculamos el ROIC
+    # Calculates return on invested capital (ROIC)
     fundamental_data["Tax Rate"] = fundamental_data["Income Tax Expense (Gain)"] / fundamental_data["Income Before Tax"]
     fundamental_data["NOPAT"] = fundamental_data["Operating Income"] * (1 - fundamental_data["Tax Rate"])
     fundamental_data["Invested Capital"] = fundamental_data["Total Stockholders Equity"].add(fundamental_data["Net Debt"], fill_value=0)
@@ -155,19 +155,19 @@ def fundamental_calculator(fundamental_data):
 
 
 
-    # =======================================     MÉTRICAS DE REINVERSIÓN      ===============================================
-    # Calculamos el Plowback Ratio
+    # =======================================    REINVESTMENT METRICS     ===============================================
+    # Calculates Plowback Ratio
     fundamental_data["Plowback Ratio"] = (fundamental_data["Net Income"] - fundamental_data["Dividends Paid"])/ fundamental_data["Net Income"]
 
-    # Calculamos el Dividend & Repurchase / FCF
+    # Calcualtes Dividend & Repurchase / FCF
     fundamental_data["Dividend & Repurchase / FCF"] = (fundamental_data["Dividends Paid"] - fundamental_data["Common Stock Repurchased"] - fundamental_data["Common Stock Issued"]) / fundamental_data["Free Cash Flow"]
 
-    # Calculamos el Dividend & Repurchase / EBITDA
+    # Calculates Dividend & Repurchase / EBITDA
     fundamental_data["Dividend & Repurchase / EBITDA"] = (fundamental_data["Dividends Paid"] - fundamental_data["Common Stock Repurchased"] - fundamental_data["Common Stock Issued"]) / fundamental_data["EBITDA"]
 
 
 
-    # =======================================     MÉTRICAS DE CRECIMIENTO      ===============================================
+    # =======================================    GROWTH METRICS    ===============================================
     growth_cols = ["Revenue","Gross Profit","EBITDA","Operating Income","Net Income","EPS", "EPS Diluted", "Weighted Avg. Shares Outs.",
     "Weighted Avg. Shares Outs. Dil.", "Free Cash Flow", "FCF per share", "CAPEX per share", "Book value per share","Cash and Cash Equivalents",
     "Gross Profit Ratio", "EBITDA ratio", "Operating Income ratio", "Net Income Ratio", "FCF Ratio", "Return on Equity", "Return on Assets", "Return on Invested Capital", "Book value"]
@@ -180,23 +180,23 @@ def fundamental_calculator(fundamental_data):
 
 
 def reconstructDf(df, trivial_fix =False):
-    # Reconstruimos los fundamentales de una empresa a partir de otros elementos
+    # We reconstruct the fundamentals of a company from other elements
 
-    min_num_filas = 1
+    min_num_rows = 1
 
     if df.empty:
-        print("El dataframe está vacío")
+        print("The data frame is empty")
         return df
     
     if not df.isnull().values.any():
-        print("El dataframe está en buen estado")
+        print("The dataframe is in good condition")
         return df
 
-    if len(df.index) < min_num_filas:
-        print("El dataframe tiene menos de {} filas".format(min_num_filas))
+    if len(df.index) < min_num_rows:
+        print("The dataframe has less than {} rows".format(min_num_rows))
         return df
     
-    # Los infinitos los tratamos como NaN
+    # We treat infinites as Not A Number
     if np.inf in df.values:
             df = df.replace(np.inf, np.nan)
 
@@ -204,10 +204,10 @@ def reconstructDf(df, trivial_fix =False):
     row_drop_set = set()
 
     for index, row in df.iterrows():
-        # Vemos qué columna tiene un valor nulo y la guardamos
+        # We see which column has a null value and save it
         null_columns = row[row.isna()].index.tolist()
 
-        # Reparamos la columna con valor nulo
+        # We repair the column with null value
         for null_colum in null_columns:
             df.loc[index, null_colum] = applyFix(row, null_colum, visited_columns=[], trivial_fix=trivial_fix)
 
@@ -217,11 +217,11 @@ def reconstructDf(df, trivial_fix =False):
     if len(row_drop_set) > 0:
         df.drop(row_drop_set, inplace=True)
 
-        # Al eliminar filas es posible que dejemos el dataframe vacío
+        # When deleting rows it is possible that we leave the dataframe empty
         if df.empty:
             return df
-        # O que no haya una cantidad de años representativa
-        if len(df.index) < min_num_filas:
+        #Or that there is not a representative number of years
+        if len(df.index) < min_num_rows:
             return df
 
 
@@ -230,14 +230,14 @@ def reconstructDf(df, trivial_fix =False):
     return df
 
 def applyFix(row, col, visited_columns, trivial_fix=False):
-    # Dependiendo de la columna, aplica un arreglo
+    # Depending on the column, apply an array
 
     if col in visited_columns:
-        print("Ya visitada. Saliendo...")
+        print("Already visited. Coming out...")
         return row[col]
 
     if row[col] == np.nan:
-        print("No es nula. Saliendo...")
+        print("Not null. Leaving...")
         return row[col]
 
     visited_columns.append(col)
@@ -817,21 +817,21 @@ def applyFix(row, col, visited_columns, trivial_fix=False):
 
 
 def try_repair_column(columns_to_repair,row, visited_columns, trivial_fix):
-    # Intenta reparar una columna (la principal) usando otras coumnas (las secundarias)
-    # Intenta reparar las columnas secundarias llamando a applyFix
-    # Si consigue reparar las necesarias, repara la columna principal
+    # Try to repair a column (the main one) using other columns (the secondary ones)
+    # Try to fix the child columns by calling applyFix
+    # If it manages to repair the necessary ones, it also repairs the main column
 
     for col_to_repair in columns_to_repair:            
-        # Si es nula intentamos reparar
+        #If it is null we try to repair
         if np.isnan(row[col_to_repair]):
-            # Si es null pero ya la hemos visitado -> Se ha intentado reparar pero no se ha podido, ergo, tampoco podemos reparar la columna principal
+            #If it is null but we have already visited it -> An attempt has been made to repair but it has not been possible, ergo, we cannot repair the main column either
             if col_to_repair in visited_columns:
                 return False
 
-            # Si la columna es nula y no la hemos visitado -> Intentamos repararla
+            # If the column is null and we have not visited it -> We try to repair it
             else:
                 row[col_to_repair] = applyFix(row, col_to_repair, visited_columns, trivial_fix)
-                # Volvemos a comprabar si la columna es nula
+                #We check again if the column is null
                 if np.isnan(row[col_to_repair]):
                     return False
 
