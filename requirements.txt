@@ -40,7 +40,8 @@ jupyter-core==4.9.2
 jupyterlab-pygments==0.2.1
 jupyterlab-widgets==1.1.0
 kiwisolver==1.4.2
-lxml==4.8.0
+#lxml==4.8.0
+lxml
 MarkupSafe==2.1.1
 matplotlib==3.5.1
 matplotlib-inline==0.1.3
@@ -59,7 +60,7 @@ pandocfilters==1.5.0
 parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.1.0
-plotly @ file:///Users/nicolas/opt/miniconda3/envs/env/conda-bld/plotly_1649173020953/work/packages/python/plotly/dist/plotly-5.7.0.tar.gz
+plotly==5.7.0
 prometheus-client==0.14.1
 prompt-toolkit==3.0.29
 protobuf==3.20.0
@@ -75,8 +76,10 @@ pyparsing==3.0.8
 pyrsistent==0.18.1
 PySocks==1.7.1
 python-dateutil==2.8.2
-pytz==2022.1
-pytz-deprecation-shim==0.1.0.post0
+#pytz==2022.1
+pytz
+#pytz-deprecation-shim==0.1.0.post0
+pytz-deprecation-shim
 pywin32==303
 pywinpty==2.0.5
 pyzmq==22.3.0
@@ -112,5 +115,6 @@ webencodings==0.5.1
 widgetsnbextension==3.6.0
 wincertstore==0.2
 wsproto==1.1.0
-yfinance==0.1.70
+#yfinance==0.1.70
+yfinance
 zipp==3.8.0

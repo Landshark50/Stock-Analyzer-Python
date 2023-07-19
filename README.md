@@ -1,5 +1,13 @@
 # Stock-Analyzer-Python
 
+## How to run in Pycharm:
+1. See what version of Chrome you are running (v114 as of 7/19/23) by going to Chrome > 3 dots in top right corner > help > about chrome
+2. Download the appropriate chromedriver extension at https://chromedriver.chromium.org/downloads
+3. Delete the old chromedriver and move the new one into this folder
+2. Open a terminal by pressing the terminal button in the lower left corner
+2. type "streamlit run main.py"
+3. Press Enter. Do not give them your emai
+
 ## Features:
 - Real time scrapping of stock data in order to get the most recent available information.
 - Cleaning, structuring and parsing of relevant data to provide an interactive and informative dashboard.

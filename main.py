@@ -28,7 +28,7 @@ st.write(
 header_cols = st.columns([3,1])
 ticker = header_cols[1].text_input('Enter stock ticker', 'AAPL')
 
-# Getting data
+# Getting data from Yahoo Finance
 # ===============================
 ticker_yahoo = yf.Ticker(ticker)
 
